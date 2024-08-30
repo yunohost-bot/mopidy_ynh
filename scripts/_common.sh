@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #=================================================
-# COMMON VARIABLES
+# COMMON VARIABLES AND CUSTOM HELPERS
 #=================================================
 
 boolstr=(false true)
@@ -10,22 +10,17 @@ cmd_file="/usr/local/bin/mopidyctl"
 
 media_dir="/home/yunohost.multimedia/share/Music"
 
-#=================================================
-# PERSONAL HELPERS
-#=================================================
-
 _mopidy_install() {
     python3 -m venv --upgrade "$install_dir/venv"
-    chown -R "$app" "$install_dir"
-
+    #REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R "$app" "$install_dir"
     venvpy="$install_dir/venv/bin/python3"
 
-    ynh_exec_as "$app" "$venvpy" -m pip install --upgrade --no-cache-dir pip
+    ynh_exec_as_app "$venvpy" -m pip install --upgrade --no-cache-dir pip
 
-    ynh_exec_as "$app" "$venvpy" -m pip install PyGObject
+    ynh_exec_as_app "$venvpy" -m pip install PyGObject
 
     # install essential packages
-    ynh_exec_as "$app" "$venvpy" -m pip install --no-cache-dir \
+    ynh_exec_as_app "$venvpy" -m pip install --no-cache-dir \
         Mopidy=="$(ynh_app_upstream_version)" \
         Mopidy-local==3.2.1 \
         Mopidy-MusicBox-Webclient==3.1.0 \
@@ -37,11 +32,3 @@ _mopidy_install() {
         Mopidy-SoundCloud==3.0.2 \
         Mopidy-MPD==3.3.0
 }
-
-#=================================================
-# EXPERIMENTAL HELPERS
-#=================================================
-
-#=================================================
-# FUTURE OFFICIAL HELPERS
-#=================================================
